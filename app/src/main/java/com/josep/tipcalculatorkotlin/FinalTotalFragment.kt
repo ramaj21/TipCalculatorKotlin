@@ -9,41 +9,46 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import com.josep.tipcalculatorkotlin.databinding.FragmentFinalTotalBinding
 import java.text.NumberFormat
 import kotlin.math.ceil
 import kotlin.math.floor
 
 class FinalTotalFragment : Fragment() {
 
+    private var _binding : FragmentFinalTotalBinding? = null
+    private val binding get() = _binding!!
+
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_final_total, container, false)
+        _binding = FragmentFinalTotalBinding.inflate(inflater, container, false)
+        val rootView = binding.root
 
         val args = FinalTotalFragmentArgs.fromBundle(requireArguments())
 
         val totalFinal = args.total
         val numOfGuests = args.numOfGuests
 
-        val totalTextView : TextView = rootView.findViewById(R.id.total_text_view)
-        totalTextView.text ="Total With Tip: ${NumberFormat.getCurrencyInstance().format(totalFinal)}"
-        val dividedCost : TextView = rootView.findViewById(R.id.divided_cost_text_view)
+        binding.totalTextView.text ="Total With Tip: ${NumberFormat.getCurrencyInstance().format(totalFinal)}"
         val costPerPerson : Double = (totalFinal / numOfGuests).toDouble()
-        dividedCost.text = "Cost Per Person: ${NumberFormat.getCurrencyInstance().format(costPerPerson)}"
+        binding.dividedCostTextView.text = "Cost Per Person: ${NumberFormat.getCurrencyInstance().format(costPerPerson)}"
 
-        val roundUp : Button = rootView.findViewById(R.id.round_up_button)
-        val roundDown : Button = rootView.findViewById(R.id.round_down_button)
         val onClickListener = View.OnClickListener { v: View? ->
             when(v?.id){
-                roundUp.id -> dividedCost.text = "Cost Per Person: ${NumberFormat.getCurrencyInstance().format(ceil(costPerPerson))}"
-                roundDown.id -> dividedCost.text = "Cost Per Person: ${NumberFormat.getCurrencyInstance().format(floor(costPerPerson))}"
+                binding.roundUpButton.id -> binding.dividedCostTextView.text = "Cost Per Person: ${NumberFormat.getCurrencyInstance().format(ceil(costPerPerson))}"
+                binding.roundDownButton.id -> binding.dividedCostTextView.text = "Cost Per Person: ${NumberFormat.getCurrencyInstance().format(floor(costPerPerson))}"
             }
         }
-        roundUp.setOnClickListener(onClickListener)
-        roundDown.setOnClickListener(onClickListener)
+        binding.roundUpButton.setOnClickListener(onClickListener)
+        binding.roundDownButton.setOnClickListener(onClickListener)
 
         return rootView
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
